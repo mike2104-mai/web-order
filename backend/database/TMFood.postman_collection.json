@@ -1,0 +1,613 @@
+{
+	"info": {
+		"_postman_id": "c15eb2cd-0737-4877-9792-f4f1f5bc7acd",
+		"name": "TMFood",
+		"description": "API của TMFood\n\nBaseURL: http://localhost:8080/api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33627366",
+		"_collection_link": "https://restless-crescent-122431.postman.co/workspace/Outsouce~8a50f341-17d1-47fa-8267-53b80f88df94/collection/33627366-c15eb2cd-0737-4877-9792-f4f1f5bc7acd?action=share&source=collection_link&creator=33627366"
+	},
+	"item": [
+		{
+			"name": "categories",
+			"item": [
+				{
+					"name": "getAllCategories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/categories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"categories"
+							]
+						},
+						"description": "API này để lấy dữ liệu của tất cả các danh mục và món ăn tướng ứng (tất cả menu).  \n\\- Sử dụng ở trang quan_li_menu.html và final_menu."
+					},
+					"response": []
+				},
+				{
+					"name": "getCategoryById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/categories/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"categories",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						},
+						"description": "API này để lấy dữ liệu của 1 danh mục và các món ăn tướng ứng vs danh mục đó (1 menu danh mục). Sử dụng ở trang quan_li_menu.html và final_menu.  \n\\- Sử dụng API này ở trang quan_li_menu.html và final_menu.html  \n\\- Truyền id của 1 category vào path variables"
+					},
+					"response": []
+				}
+			],
+			"description": "API CRUD categories"
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "staff1",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/users/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						},
+						"description": "API đăng nhập tài khoản admin  \nNhận vào body (urlencoded) chứa username và passowrd  \nSử dụng ở trang_login_nhan_vien.html"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "foods",
+			"item": [
+				{
+					"name": "createNewFood",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Mỳ cay cấp độ 7",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "70000",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"description": "Tải file lên từ máy",
+									"type": "file",
+									"src": "/C:/Users/Admin/Desktop/orderFood/customer/mì.jpg"
+								},
+								{
+									"key": "categoryId",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/foods/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"foods",
+								""
+							]
+						},
+						"description": "API tạo mới một sản phẩm  \n\\- Truyền vào body (định dạng form-data) các trường name, price, image (file tải lên) và categoryId  \n\\- Sử dụng ở trang quan_ly_menu.html"
+					},
+					"response": []
+				},
+				{
+					"name": "getAllFoods",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/foods/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"foods",
+								""
+							]
+						},
+						"description": "API lấy tất cả danh sách sản phẩm  \n\\- Sử dụng ở trang quan_li_menu.html"
+					},
+					"response": []
+				},
+				{
+					"name": "getFoodById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/foods/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"foods",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "13"
+								}
+							]
+						},
+						"description": "API lấy thông tin sản phẩm dựa vào id  \n\\- Truyền vào id của 1 sản phẩm muốn lấy thoogn tin vào path variables  \n\\- Sử dụng ở trang quan_ly_menu.html."
+					},
+					"response": []
+				},
+				{
+					"name": "updateFood",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "price",
+									"value": "15000",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/foods/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"foods",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "13"
+								}
+							]
+						},
+						"description": "API cập nhật sản phẩm:  \n\\- Truyền vào Id của sản phẩm cần cập nhật vào path variables  \n\\- Truyền vào body (định dạng form-data) các trường thông tin cần thay đổi: name, price, image (file ảnh), categoryId. (không nhất thiết phải truyền vào hết các trường)  \n\\- Sử dụng ở trang quan_ly_menu.html."
+					},
+					"response": []
+				},
+				{
+					"name": "deleteFood",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/foods/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"foods",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "15"
+								}
+							]
+						},
+						"description": "API xóa sản phẩm  \n\\- Truyền vào id của sản phẩm cần xóa vào path variables  \n\\- Sử dụng ở trang quan_ly_menu.html."
+					},
+					"response": []
+				}
+			],
+			"description": "Danh sách API CRUD foods"
+		},
+		{
+			"name": "tables",
+			"item": [
+				{
+					"name": "selectTable",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "status",
+									"value": "selected",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/tables/:id/select",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tables",
+								":id",
+								"select"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "API cho phép người dùng cập nhật trạng thái của 1 bàn thành selected (Đang chọn món)  \n\\- Truyền vào id của bản muốn cập nhật  \n\\- Truyền vào body (urlencoded) với trường status: selected  \n\\- Sủ dụng ở trang gio_hang.html  \n\\- API này trả về object với trường success (nếu là true thì tức là người dùng chọn bàn thành công, ngược lại là không thành công (do có người khác đã chọn trước)) và trường data là mảng danh sách tất cả tables trả về để cập nhật lại giao diện"
+					},
+					"response": []
+				},
+				{
+					"name": "createTable",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Bàn 13",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/tables",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tables"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Bàn 1",
+									"disabled": true
+								}
+							]
+						},
+						"description": "API tạo mới bàn  \n\\- Truyền vào body (urlencoded) name  \n\\- Không sủ dụng trong dự án nhưng có thể chạy api ở postman để tạo thêm bàn"
+					},
+					"response": []
+				},
+				{
+					"name": "updateTable",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "status",
+									"value": "occupied",
+									"type": "text"
+								},
+								{
+									"key": "",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/tables/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tables",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "11"
+								}
+							]
+						},
+						"description": "API cập nhật table  \n\\- Dùng để admin cập nhật trạng thái bàn  \n\\- Truyền vào id của bàn cần cập nhật vào path Variables  \n\\- Truyền vào body (urlencoded) trường status muốn cập nhật  \n\\- Sử dụng ở trang quan_li_ban_chi_tiet.html"
+					},
+					"response": []
+				},
+				{
+					"name": "resetAllTable",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tables/reset",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tables",
+								"reset"
+							]
+						},
+						"description": "API reset tất cả các bàn về trạng thái \"empty\"  \n\\- Sử dụng ở trang quan_ly_ban.html"
+					},
+					"response": []
+				},
+				{
+					"name": "getAllTables",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tables",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tables"
+							]
+						},
+						"description": "API lấy thông tin tất cả các bàn  \n\\- Sủ dụng ở trang quan_ly_ban.html và gio_hang.html"
+					},
+					"response": []
+				}
+			],
+			"description": "API CRUD tables"
+		},
+		{
+			"name": "orders",
+			"item": [
+				{
+					"name": "getOrderById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/orders/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"orders",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "19"
+								}
+							]
+						},
+						"description": "API Lấy thông tin của 1 đơn hàng dựa vào id  \n\\- Truyền vào id của order vào path varibles  \n\\- Sủ dụng ở trang quan_li_don_hang-hoa_don.html"
+					},
+					"response": []
+				},
+				{
+					"name": "updateOrder",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "status",
+									"value": "completed",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/orders/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"orders",
+								":id"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "20"
+								}
+							]
+						},
+						"description": "API cập nhật trạng thái Order  \n\\- Truyền vào id của order muốn cạp nhật trạng thái (pending -> completed)  \n\\- Truyền vào body (urlencode) trường status  \n\\- Sủ dụng ở trang quan_li_ban_chi_tiet.html"
+					},
+					"response": []
+				},
+				{
+					"name": "getOrderByTable",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/orders/table/:tableId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"orders",
+								"table",
+								":tableId"
+							],
+							"variable": [
+								{
+									"key": "tableId",
+									"value": "3"
+								}
+							]
+						},
+						"description": "API lấy ra đơn hàng dựa vào id của bàn (lấy ra đơn hàng mới nhất của bàn đó)  \n\\- Truyền vào tableId vào path variables  \n\\- Sủ dụng ở trang quan_li_ban_chi_tiet.html"
+					},
+					"response": []
+				},
+				{
+					"name": "getAllOrders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"orders"
+							]
+						},
+						"description": "API lấy ra danh sách tất cả đơn hàng (theo thứ tự từ mới nhất đến cũ nhất)  \n\\- Sủ dụng ở trang quan_ly_don_hang.html"
+					},
+					"response": []
+				},
+				{
+					"name": "createNewOrder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"customerName\": \"Lam\",\r\n    \"customerPhone\": \"08234234233\",\r\n    \"tableId\": \"2\",\r\n    \"items\": [\r\n        {\r\n            \"foodId\": \"4\",\r\n            \"quantity\": 3\r\n        },\r\n        {\r\n            \"foodId\": \"5\",\r\n            \"quantity\": 1\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"orders"
+							]
+						},
+						"description": "API tạo mới một đơn hàng  \n\\- Truyền vào body (raw json) các trường: customerName, customerPhone, tableId (id của bàn được đặt) và mảng items, mảng items chứa các object có trường foodId và quantity (tương ứng với sản phẩm và số lượng sản phẩm được đặt)  \n\\- Sủ dụng ở trang gio_hang.html"
+					},
+					"response": []
+				}
+			],
+			"description": "API CRUD với orders"
+		}
+	]
+}

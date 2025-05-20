@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TMFood-Quản lí menu-Đồ uống</title>
+    <link rel="stylesheet" href="quan_li_menu_style.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <header>
+      <h1 class="logo">TMFood</h1>
+      <nav>
+          <a href="#" class="active"
+            >Quản lí menu</a
+          >
+          <a href="/admin/quan_li_ban.html" class="btn staff">Quản lí bàn</a>
+          <a href="/admin/quan_li_don_hang.html" class="btn staff"
+            >Quản lí đơn hàng</a
+          >
+      </nav>
+      <div class="user-info" style="margin-left: 20px">
+        <i
+          class="fas fa-user-circle"
+          style="font-size: 20px; margin-right: 5px"
+        ></i>
+        <span id="userName"></span>
+        <button class="logout-btn" onclick="logout()">
+          <i class="fas fa-sign-out-alt" style="font-size: 20px; margin-left: 5px"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="container">
+      <aside class="sidebar">
+        <ul class="category-list">
+          <!-- Categories will be dynamically loaded here -->
+        </ul>
+      </aside>
+
+      <main>
+        
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+          "
+        >
+          <button class="btn-category">Tất cả</button>
+          <div class="add-new" onclick="handleAddFood()"">
+            <p>Thêm món mới</p>
+            <button class="add-btn" >+</button>
+          </div>
+        </div>
+
+        <div class="food-grid">
+          <!-- Food items remain the same -->
+
+          <!-- Other food items with same structure -->
+        </div>
+      </main>
+    </div>
+
+    <!-- Add New Item Modal -->
+    <div id="addItemModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 style="padding: 12px 0 16px">Thêm món mới</h2>
+        <form id="addItemForm">
+          <div class="form-group">
+            <label for="itemName">Tên món:</label>
+            <input type="text" id="itemName" required />
+          </div>
+          <div class="form-group">
+            <label for="itemPrice">Giá:</label>
+            <input type="number" id="itemPrice" required />
+          </div>
+          <div class="form-group">
+            <label for="itemCategory">Danh mục:</label>
+            <select id="itemCategory" required>
+              <!-- Categories will be dynamically loaded here -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="itemImage">Hình ảnh:</label>
+            <input type="file" id="itemImage" accept="image/*" required />
+            <div
+              id="imagePreview"
+              style="display: none; position: relative; margin-top: 10px"
+            >
+              <img id="preview" style="max-width: 200px; max-height: 200px; object-fit: contain" />
+              <button
+                type="button"
+                id="removeImage"
+                style="
+                  position: absolute;
+                  top: 0;
+                  right: 0;
+                  background: red;
+                  color: white;
+                  border: none;
+                  border-radius: 50%;
+                  width: 24px;
+                  height: 24px;
+                  cursor: pointer;
+                "
+              >
+                &times;
+              </button>
+            </div>
+          </div>
+          <script>
+            // Handle image preview
+            document
+              .getElementById("itemImage")
+              .addEventListener("change", function (e) {
+                const preview = document.getElementById("preview");
+                const previewContainer =
+                  document.getElementById("imagePreview");
+
+                if (e.target.files && e.target.files[0]) {
+                  const reader = new FileReader();
+
+                  reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    previewContainer.style.display = "block";
+                  };
+
+                  reader.readAsDataURL(e.target.files[0]);
+                }
+              });
+
+            // Handle remove image
+            document
+              .getElementById("removeImage")
+              .addEventListener("click", function () {
+                document.getElementById("itemImage").value = "";
+                document.getElementById("imagePreview").style.display = "none";
+                document.getElementById("preview").src = "";
+                document.getElementById("itemImage").style.display = "block";
+              });
+          </script>
+          <button id="submit-btn" type="submit">Thêm món</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const btnCategory = document.querySelector(".btn-category");
+      const categoryList = document.querySelector(".category-list");
+      const foodGrid = document.querySelector(".food-grid");
+      const backendURL = "http://localhost:8080/api";
+      //Function fetch all food items
+
+      async function fetchAllFoods() {
+        const foodGrid = document.querySelector(".food-grid");
+
+        try {
+          let response = await fetch(`${backendURL}/foods`);
+          response = await response.json();
+          let foodList = response.data;
+          foodGrid.innerHTML = "";
+          btnCategory.innerHTML = `<span>Tất cả</span>`;
+          foodList.forEach((item) => {
+            const foodItem = createFoodItemElement(item);
+            foodGrid.appendChild(foodItem);
+          });
+        } catch (error) {
+          console.error("Error fetching category items:", error);
+          foodGrid.innerHTML =
+            "<p>Failed to load items. Please refresh the page.</p>";
+        }
+      }
+
+      function createFoodItemElement(item) {
+        const div = document.createElement("div");
+        div.className = "food-item";
+        div.setAttribute("data-id", item.id);
+        div.setAttribute("data-category", item.categoryId);
+
+        div.innerHTML = `
+                <div class="food-item__image" >
+                  <img src="${item.image}" alt="${item.name}">
+                </div>
+                <p>${item.name}</p>
+                <span class="price">${parseFloat(item.price).toLocaleString("vi-VN")}đ</span>
+
+                <div class="btn-group">
+                    <button class="edit-btn" onclick="handleClickEditFood(${item.id})"><i class="fas fa-edit"></i></button>
+                    <button class="delete-btn" onclick="handleDeleteFood(${item.id})"><i class="fas fa-trash"></i></button>
+            </div>
+            `;
+
+        return div;
+      }
+
+       function handleAddFood() {
+        const addItemModal = document.getElementById("addItemModal");
+        addItemModal.style.display = "block";
+        const title = document.querySelector(".modal-content h2");
+        title.textContent = "Thêm món mới";
+        const submitBtn = document.getElementById("submit-btn");
+        submitBtn.textContent = "Thêm món";
+        submitBtn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          const formData = new FormData()
+          let name = document.getElementById("itemName").value;
+          let price = document.getElementById("itemPrice").value;
+          let categoryId = document.getElementById("itemCategory").value;
+          let image = document.getElementById("itemImage").files[0];
+          
+          //Validate input trước khi gửi request
+          if(!name || !price || !categoryId || !image){
+            alert("Vui lòng nhập đầy đủ thông tin");
+            return;
+          }
+
+          formData.append("name", document.getElementById("itemName").value);
+          formData.append("price", document.getElementById("itemPrice").value);
+          formData.append("categoryId", document.getElementById("itemCategory").value);
+          formData.append("image", document.getElementById("itemImage").files[0]);
+
+          try {
+            let response = await fetch(`${backendURL}/foods`, {
+              method: "POST",
+              body: formData,
+            });
+            response = await response.json();
+            console.log("check response", response);
+            if (!response.success) {
+              throw new Error("Failed to add new item");
+            }
+
+            const newItem = response.data;
+
+            alert("Thêm món ăn thành công");
+            // Add new item to the grid
+            const foodGrid = document.querySelector(".food-grid");
+            const foodItem = createFoodItemElement(newItem);
+            foodGrid.appendChild(foodItem);
+
+            // Close modal and reset form
+            addItemModal.style.display = "none";
+            addItemForm.reset();
+          } catch (error) {
+            console.error("Error adding new item:", error);
+          }
+        });
+      }
+
+      async function fetchFoodById(id) {
+        try {
+          const response = await fetch(`${backendURL}/foods/${id}`);
+          const data = await response.json();
+          if (!data.success) {
+            throw new Error("Failed to fetch food by ID");
+          }
+          return data.data;
+        } catch (error) {
+          console.error("Error fetching food by ID:", error);
+          return null;
+        }
+      }
+
+      async function handleClickEditFood(id) {
+        addItemModal.style.display = "block";
+        const title = document.querySelector(".modal-content h2");
+        title.textContent = "Cập nhật món";
+        const submitBtn = document.getElementById("submit-btn");
+        submitBtn.textContent = "Cập nhật món";
+     
+
+        const food = await fetchFoodById(id);
+        if (food) {
+          document.getElementById("itemName").value = food.name;
+          document.getElementById("itemPrice").value = food.price;
+          document.getElementById("itemCategory").value = food.categoryId;
+
+          //Hiển thị hình ảnh lên preview và ẩn input file
+          document.getElementById("preview").src = food.image;
+          document.getElementById("imagePreview").style.display = "block";
+          document.getElementById("itemImage").style.display = "none";
+        }
+
+        submitBtn.onclick = async (e) => {
+          e.preventDefault();
+          // Nếu có file ảnh mới được chọn
+          const formData = new FormData()
+          let name = document.getElementById("itemName").value;
+          let price = document.getElementById("itemPrice").value;
+          let categoryId = document.getElementById("itemCategory").value;
+          let image = document.getElementById("itemImage").files[0];
+          let preview = document.getElementById("preview").getAttribute("src");
+          //Validate input trước khi gửi request
+          if(!name || !price || !categoryId  ){
+            alert("Vui lòng nhập đầy đủ thông tin");
+            return;
+          } 
+          if (!image  && !preview ) {
+              alert("Vui lòng tải file ảnh lên!");
+            return;
+          }
+          formData.append("name", document.getElementById("itemName").value);
+          formData.append("price", document.getElementById("itemPrice").value);
+          formData.append("categoryId", document.getElementById("itemCategory").value);
+          formData.append("image", document.getElementById("itemImage").files[0]);
+          try {
+            const response = await fetch(`${backendURL}/foods/${id}`, {
+              method: "PUT",
+              body: formData,
+            });
+
+            const result = await response.json();
+            if (result.success) {
+              alert("Cập nhật món ăn thành công!");
+              window.location.reload();
+            } else {
+              alert("Cập nhật món ăn thất bại!");
+            }
+          } catch (error) {
+            console.error("Error updating food:", error);
+            alert("Có lỗi xảy ra khi cập nhật món ăn. Vui lòng thử lại!");
+          }
+        };
+
+        
+      }
+
+      async function handleDeleteFood(id) {
+        if (confirm("Bạn có chắc chắn muốn xóa món ăn này?")) {
+          try {
+            const response = await fetch(`${backendURL}/foods/${id}`, {
+              method: "DELETE",
+            });
+
+            const result = await response.json();
+            if (result.success) {
+              alert("Xóa món ăn thành công!");
+
+              // XÓa thành công thì reload lại trang
+              window.location.reload();
+            } else {
+              alert("Xóa món ăn thất bại!");
+            }
+          } catch (error) {
+            console.error("Error deleting food:", error);
+            alert("Có lỗi xảy ra khi xóa món ăn. Vui lòng thử lại!");
+          }
+        }
+      }
+      async function fechCategory(selectedCategory) {
+        try {
+          let response = await fetch(
+            `${backendURL}/categories/${selectedCategory}`
+          );
+          response = await response.json();
+          let foodList = response.data.Foods;
+
+          btnCategory.innerHTML = `<span>${response.data.name}</span>`;
+          foodGrid.innerHTML = "";
+
+          foodList.forEach((item) => {
+            const foodItem = createFoodItemElement(item);
+            foodGrid.appendChild(foodItem);
+          });
+        } catch (error) {
+          console.error("Error fetching category items:", error);
+          foodGrid.innerHTML =
+            "<p>Failed to load items. Please refresh the page.</p>";
+        }
+      }
+      function authenticateUser() {
+        const name = sessionStorage.getItem("name");
+        const username = sessionStorage.getItem("username");
+        if (!name || !username) {
+          alert("Vui lòng đăng nhập để truy cập vào trang quản lí menu");
+          window.location.href = "/admin/trang_login_nhan_vien.html";
+        } else {
+          document.getElementById("userName").textContent = name;
+        }
+      }
+      function logout() {
+        sessionStorage.clear();
+        window.location.href = "/admin/trang_login_nhan_vien.html";
+      }
+      async function fetchCategories() {
+        // Fetch categories from API
+        try {
+          const response = await fetch(`${backendURL}/categories`);
+          if (!response) {
+            throw new Error("Failed to fetch categories");
+          }
+          let categories = await response.json();
+          if (categories.success) {
+            categories = categories.data;
+            // Thêm mục "Tất cả" vào danh sách
+            categoryList.innerHTML = `
+                        <li class="category active" data-category="all">Tất cả</li>
+                        <hr>
+                    `;
+            // Thêm các danh mục đã lấy vào sidebar và dropdown
+            categories.forEach((category) => {
+              categoryList.innerHTML += `
+                            <li class="category" data-category="${category.id}">${category.name}</li>
+                            <hr>
+                        `;
+              const categorySelect = document.getElementById("itemCategory");
+              if (categorySelect) {
+                categorySelect.innerHTML += `
+                                <option value="${category.id}">${category.name}</option>
+                            `;
+              }
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+          alert("Failed to load categories. Please refresh the page.");
+        }
+      }
+
+      
+
+      document.addEventListener("DOMContentLoaded", async function () {
+        authenticateUser();
+        const categoryList = document.querySelector(".category-list");
+        const categorySelect = document.getElementById("itemCategory");
+        const foodItems = document.querySelectorAll(".food-item:not(.add-new)");
+        const btnCategory = document.querySelector(".btn-category");
+        const addItemModal = document.getElementById("addItemModal");
+        const addNewBtn = document.querySelector(".add-new");
+        const closeBtn = document.querySelector(".close");
+        const addItemForm = document.getElementById("addItemForm");
+        // Fetch categories and food items on page load
+        await fetchAllFoods();
+        await fetchCategories();
+
+        // Show addItemModal when clicking add new button
+        addNewBtn.addEventListener("click", () => {
+          addItemModal.style.display = "block";
+        });
+        // Close addItemModal when clicking (x)
+        closeBtn.addEventListener("click", () => {
+          addItemModal.style.display = "none";
+        });
+        // Close addItemModal when clicking outside
+        window.addEventListener("click", (event) => {
+          if (event.target === addItemModal) {
+            addItemModal.style.display = "none";
+          }
+        });
+       
+
+        // Thêm sự kiện click vào danh mục
+        const categoryElements = document.querySelectorAll(".category");
+        categoryElements.forEach((category) => {
+          category.addEventListener("click", async function () {
+            categoryElements.forEach((c) => c.classList.remove("active"));
+            this.classList.add("active");
+
+            const selectedCategory = this.getAttribute("data-category");
+            // Nếu chọn tất cả thì gọi hàm fetchAllFoods
+            if (selectedCategory === "all") {
+              await fetchAllFoods();
+              return;
+            }
+            // Nếu chọn danh mục khác thì gọi hàm fetchAllFoods với danh mục đó
+            await fechCategory(selectedCategory);
+          });
+        });
+
+        // Search functionality
+        const searchInput = document.querySelector(".search-bar input");
+        searchInput.addEventListener("input", function () {
+          const searchTerm = this.value.toLowerCase();
+
+          foodItems.forEach((item) => {
+            const itemName = item.querySelector("p").textContent.toLowerCase();
+            if (itemName.includes(searchTerm)) {
+              item.style.display = "block";
+            } else {
+              item.style.display = "none";
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

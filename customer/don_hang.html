@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TMFood-Giỏ hàng</title>
+    <link rel="stylesheet" href="don_hang.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <header>
+      <div class="logo">TMFood</div>
+      <nav>
+        <ul>
+          <li>
+            <a href="trang_chu.html"><i class="fas fa-home"></i> Trang chủ</a>
+          </li>
+          <li>
+            <a href="final_menu.html"><i class="fas fa-th"></i> Menu</a>
+          </li>
+          <li>
+            <a href="gio_hang.html" class="cart_tab"
+              ><i class="fas fa-shopping-cart"></i> Giỏ hàng
+              <!-- <span id="cart-count">(0)</span> -->
+            </a>
+          </li>
+          <li>
+            <a href="#" class="active"
+              ><i class="fas fa-receipt"></i> Đơn hàng của tôi</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <div class="container">
+      <aside class="sidebar"></aside>
+      <main class="content">
+        <div class="table-info">
+          <div>
+            Số bàn của bạn:
+            <span class="table-number" style="font-weight: bold">_______</span>
+          </div>
+          <div>
+            Trạng thái:
+            <span class="table-status">_______</span>
+          </div>
+        </div>
+
+        <!-- Danh sách món -->
+        <div class="food-list"></div>
+      </main>
+    </div>
+
+    <!-- Thanh thanh toán -->
+    <footer class="checkout">
+      <span class="total">Tổng phải thanh toán: 0</span>
+      <button class="order-btn" onclick="handleGoToBill()">Xem hóa đơn</button>
+    </footer>
+
+    <script>
+      const tableNumber = document.querySelector(".table-number");
+      const tableStatus = document.querySelector(".table-status");
+      //Lấy dữ liệu từ sessionStorage
+
+      const customerName = sessionStorage.getItem("customerName") || null;
+      const customerPhone = sessionStorage.getItem("customerPhone") || null;
+
+      async function fetchOrderByCustomerPhone() {
+        try {
+          const response = await fetch(
+            `http://localhost:8080/api/orders/customer/${customerPhone}`
+          );
+          const data = await response.json();
+          let order = data.data;
+          return order;
+        } catch (err) {
+          console.log("Error fetching order by customer phone", err);
+        }
+      }
+
+      function handleGoToBill() {
+        window.location.href = "hoa_don.html";
+      }
+
+      document.addEventListener("DOMContentLoaded", async function () {
+        // Lấy thông tin đơn hàng từ sessionStorage
+        const customerName = sessionStorage.getItem("customerName") || null;
+        const customerPhone = sessionStorage.getItem("customerPhone") || null;
+        //Hiển thị số lượng sản phẩm trong giỏ hàng
+        const foodList = document.querySelector(".food-list");
+        let order = null;
+
+        if (customerName && customerPhone) {
+          order = await fetchOrderByCustomerPhone();
+        }
+        if (!order) {
+          sessionStorage.removeItem("order");
+          alert(
+            "Bạn chưa có đơn hàng nào! Vui lòng quay trở về menu để đặt món"
+          );
+          window.location.href = "final_menu.html";
+        }
+
+        let foodOrder = order.Foodorders;
+
+        //Hiển thị danh sách món
+        foodList.innerHTML = "";
+        // Add each order item to the food list
+        foodOrder.forEach((item) => {
+          const foodItem = document.createElement("div");
+          foodItem.className = "food-item";
+          let Food = item.Food;
+          foodItem.innerHTML = `
+                          <img src="${Food.image}" alt="${Food.name}">
+                          <div class="food-info">
+                              <h3>${Food.name}
+                                <span style="font-size: 14px; color: rgb(199, 62, 62);">X ${
+                                  item.quantity
+                                }</span>
+                              </h3>
+                              <p>${Food.price.toLocaleString()}Đ</p>
+                          </div>
+
+                          <div class="food-price">
+                              <span>Thành tiền:</span> <strong>${parseInt(
+                                item.totalPrice
+                              ).toLocaleString("vi-VN")}Đ</strong>
+                          </div>
+                      `;
+          foodList.appendChild(foodItem);
+        });
+
+        // Update total price
+        const total = foodOrder.reduce(
+          (sum, item) => sum + parseInt(item.totalPrice),
+          0
+        );
+        console.log("Check total", total);
+
+        document.querySelector(
+          ".total"
+        ).textContent = `Tổng phải thanh toán: ${total.toLocaleString(
+          "vi-VN"
+        )}Đ`;
+        //Nếu kiểm tra có selectedTable trong sessionStorage thì hiển thị số bàn nếu không thì hiển thị nút chọn bàn
+        if (order.Table) {
+          tableNumber.textContent = order.Table.name;
+          switch (order.Table.status) {
+            case "empty":
+              tableStatus.textContent = "Trống";
+              tableStatus.classList.add("empty");
+              break;
+            case "occupied":
+              tableStatus.textContent = "Đã lên món";
+              tableStatus.classList.add("occupied");
+              break;
+            case "waiting":
+              tableStatus.textContent = "Đang chờ món";
+              tableStatus.classList.add("waiting");
+              break;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
