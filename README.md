@@ -9,5 +9,4 @@
 - Tài khoản đăng nhập admin là 
 - username: staff1
 - password: 123456
-            tongmai
-            123
+
